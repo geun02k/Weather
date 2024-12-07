@@ -22,6 +22,12 @@ public class DiaryService {
     @Value("${openweathermap.key}")
     private String apiKey;
 
+    private final DiaryRepository diaryRepository;
+
+    public DiaryService(DiaryRepository diaryRepository) {
+        this.diaryRepository = diaryRepository;
+    }
+
     public void createDiary(LocalDate date, String text) {
         // 1. OpenWeahterMap에서 SpringBoot로 데이터 받아오기
         String weatherData = getWeatherString();
@@ -38,6 +44,13 @@ public class DiaryService {
         Map<String, Object> parsedWeather = parseWeather(weatherData);
 
         // 3. SpringBoot에서 DB로 데이터 저장하기
+        Diary newDiary = new Diary();
+        newDiary.setWeather(parsedWeather.get("main").toString());
+        newDiary.setIcon(parsedWeather.get("icon").toString());
+        newDiary.setTemperature((Double) parsedWeather.get("temp"));
+        newDiary.setText(text);
+        newDiary.setDate(date);
+        diaryRepository.save(newDiary);
     }
 
     private String getWeatherString() {
