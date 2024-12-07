@@ -291,3 +291,16 @@ repositories에 사내 저장소 이름도 작성해주어야한다. (그러면 
      : @Entity에서 name 속성을 이용해 매핑 테이블을 지정하지 않고
        @Table 어노테이션을 추가로 이용해 매핑 테이블을 지정할 수도 있다.
 
+5. JpaMemoRepository 구현
+   - JpaRepository 클래스를 상속받아 해당 클래스를 생성하기만해도
+     여태까지 JdbcMemoRepository에 작성했던 메서드들 호출이 가능하다.
+     따라서 JdbcMemoRepository와 JpaMemoRepository의 코드 양의 차이가 확연히 들어난다.
+
+   - JpaRepository
+     JPA는 ORM의 자바 표준 명세이다.
+     따라서 자바에서 ORM 개념을 활용할 때 쓸 메서드들은 JpaRepository에 이미 모두 정의가 되어있다.
+     개발자는 그저 메서드를 가져와 사용하기만하면 된다.
+
+   - JpaRepository<클래스, pk의타입>
+     : 어떤 클래스를 가져와 연결할건지, 테이블의 pk 타입은 무엇인지 명시적으로 작성이 필요하다.
+
