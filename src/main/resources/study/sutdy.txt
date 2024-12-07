@@ -223,3 +223,8 @@ repositories에 사내 저장소 이름도 작성해주어야한다. (그러면 
 1. build.gradle에 jdbc, mysql 관련 라이브러리 추가
    - implementation 'org.springframework.boot:spring-boot-starter-jdbc'
    - runtimeOnly 'com.mysql:mysql-connector-j'
+
+2. application.properties 파일에 DB 접속정보 저장
+   - 미설정 시 서버 실행 시 아래의 오류 발생
+     Failed to configure a DataSource:
+     'url' attribute is not specified and no embedded datasource could be configured.
