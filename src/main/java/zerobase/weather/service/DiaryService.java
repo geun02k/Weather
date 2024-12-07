@@ -28,6 +28,14 @@ public class DiaryService {
         System.out.println(weatherData);
 
         // 2. 받아온 json 데이터 사용 가능하게 파싱하기
+        // url을 통해 받아온 json 데이터는 20개가 넘는 다량의 데이터를 가지고 있다.
+        // 이 20개의 정보들을 명시한 class를 만들어 데이터를 담을수도 있지만
+        // 이는 사용하지 않을 데이터들을 담기 떄문에 비효율적이다.
+        // 따라서 모든걸 명시한 클래스를 만들어 url 요청으로 받은 json 데이터를
+        // 해당 클래스타입으로 변환할 수도 있지만
+        // 이럴 때는 큰 class를 만드는 것이 아닌
+        // json 데이터를 파싱해와 class에 담는 방식이 더 좋아보인다.
+        Map<String, Object> parsedWeather = parseWeather(weatherData);
 
         // 3. SpringBoot에서 DB로 데이터 저장하기
     }
@@ -67,5 +75,32 @@ public class DiaryService {
         } catch (Exception e) {
             return "failed to get response";
         }
+    }
+
+    private Map<String, Object> parseWeather(String jsonString) {
+        JSONParser jsonParser = new JSONParser();
+        JSONObject jsonObject;
+
+        try {
+            jsonObject = (JSONObject) jsonParser.parse(jsonString);
+        } catch (ParseException e) {
+            // 단순 예외만 발생(예외를 처리해서 없애는 것이 아님!!)
+            throw new RuntimeException(e);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        // 중괄호가 아닌 대괄호로 시작하는 json 데이터는 JSONObject가 아닌 JSONArray이다.
+        // 따라서 파싱방법이 다르다.
+        // JSONArray 형태이지만 row는 단 하나이다. 따라서 0번째 객체를 가져오면 된다.
+        JSONArray weatherArray = (JSONArray) jsonObject.get("weather");
+        JSONObject weatherData = (JSONObject) weatherArray.get(0);
+        resultMap.put("main", weatherData.get("main"));
+        resultMap.put("icon", weatherData.get("icon"));
+
+        JSONObject mainData = (JSONObject) jsonObject.get("main");
+        resultMap.put("temp", mainData.get("temp"));
+
+        return resultMap;
     }
 }
