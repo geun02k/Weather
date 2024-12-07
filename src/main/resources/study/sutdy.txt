@@ -228,3 +228,7 @@ repositories에 사내 저장소 이름도 작성해주어야한다. (그러면 
    - 미설정 시 서버 실행 시 아래의 오류 발생
      Failed to configure a DataSource:
      'url' attribute is not specified and no embedded datasource could be configured.
+
+3. MySQL에 데이터베이스, 테이블생성
+   - Project 데이터베이스 생성
+   - Memo 테이블 생성
