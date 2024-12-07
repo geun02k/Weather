@@ -400,3 +400,29 @@ repositories에 사내 저장소 이름도 작성해주어야한다. (그러면 
                     Row was updated or deleted by another transaction (or unsaved-value mapping was incorrect):
                     [zerobase.weather.domain.Memo#1]
         - 해결하는데 참고된 블로그 : https://programmer-chocho.tistory.com/80
+
+
+
+
+
+=============================== << MVC패턴 >> ===============================
+<Controller>
+
+<Service>
+- @Value : import org.springframework.beans.factory.annotation.Value; (lombok의 @value 아님 주의)
+           .properties 파일에 정의된(?) key에 대한 value값 가져오기
+
+           - in DiaryService
+             @Value 어노테이션을 사용해 apikey값을 가져오는 이유
+             application.properties는
+             지금 로컬환경이라는 단 하나의 환경에 대한 설정정보를 담고있지만
+             실무 개발 시에는 로컬, 개발테스트, 운영환경과 같이 여러 환경이 존재한다.
+             이 다양한 환경들은 같은 DB를 바라보지 않는다. 따라서 환경별로 다른 DB를 지정하게 된다.
+             그런 환경 분리는 resource 폴더 아래의 properties 파일에서 properties를 환경마다 지정해주고
+             코드상에서는 환경과 무관하게 아래와 같이 키값만 가지고 value를 불러올 수 있다.
+
+
+<Repository>
+
+<Domain>
+
