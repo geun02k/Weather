@@ -259,3 +259,35 @@ repositories에 사내 저장소 이름도 작성해주어야한다. (그러면 
      : 쿼리 출력 여부 설정 (JPA는 쿼리를 자동생성해주기 때문에 출력해 확인 필요시 true)
    - spring.jpa.database=mysql
      : 어떤 데이터베이스를 쓰는지 작성
+
+3. Memo 클래스에 @Entity 어노테이션을 사용해 Entity화 하기
+   - JPA는 스프링부트의 클래스와 DB의 테이블을 매핑하는 것이다.
+     이 때 테이블의 스프링부트의 여러 클래스들을 하나의 DB 테이블에 매핑시키는 경우도 있을 수 있다. (하나의 테이블에 여러 Entity 매핑가능)
+     이런 경우에는 각각의 클래스들을 Entity로 지정해 테이블과 연결할 수 있다.
+     따라서 클래스의 @Entity 어노테이션을 이용해 연결된 테이블과 사용할 값들을 명시해주게 된다.
+
+     -> @Entity
+     name 속성을 설정해주지 않고 @Entity만 사용하게 되면
+     클래스명과 동일한 이름의 테이블과 매핑된다.
+     -> @Entity(name="Memo")
+        : Memo 테이블에 매핑된 Entity
+        : name 속성에 클래스과 매핑할 테이블명을 작성한다.
+
+     예를들면 어떤 Entity는 Memo 테이블의 id값만 사용하고 싶을 수 있다.
+     그런 경우 id값만 가지는 Entity를 생성할 수 있다.
+     그리고 id, text 정보를 모두 가지는 Entity를 또 생성할 수 있다.
+     이렇게 활용 방안에 따라서 하나의 테이블에 대해 여러 Entity를 생성할 수도 있다.
+
+     - @Id : 테이블의 pk 필드에 해당 어노테이션 필수 추가
+     - @GeneratedValue : 값 자동증가 필드에 사용
+                         아래는 strategy 속성의 값
+                        - GenerationType.AUTO : 자동증가
+                        - GenerationType.IDENTITY : 키 생성을 DB에 위임(스프링부트는 키생성x)
+                        - GenerationType.SEQUENCE : 데이터베이스 Object를 만들어서 키 생성해줌
+                        - GenerationType.TABLE : 키생성을 위한 테이블을 생성해 제공
+
+4. Memo 클래스에 @Table 붙이기 (생략가능)
+   - @Table(name="Memo")
+     : @Entity에서 name 속성을 이용해 매핑 테이블을 지정하지 않고
+       @Table 어노테이션을 추가로 이용해 매핑 테이블을 지정할 수도 있다.
+
