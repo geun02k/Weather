@@ -252,3 +252,10 @@ repositories에 사내 저장소 이름도 작성해주어야한다. (그러면 
 <JPA 사용하기>
 1. build.gradle 파일에 jpa 관련 라이브러리 추가
    - implementation 'org.springframework.boot:starter-data-jpa'
+
+2. application.properties 파일에 DB 접속정보 저장
+   - jdbc의 기존 접속정보를 유지하고 아래의 두 설정 추가
+   - spring.jpa.show-sql=true
+     : 쿼리 출력 여부 설정 (JPA는 쿼리를 자동생성해주기 때문에 출력해 확인 필요시 true)
+   - spring.jpa.database=mysql
+     : 어떤 데이터베이스를 쓰는지 작성
