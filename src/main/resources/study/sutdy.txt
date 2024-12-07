@@ -193,7 +193,7 @@ repositories에 사내 저장소 이름도 작성해주어야한다. (그러면 
 
 <JPA / JDBC>
 1. JPA (Java Persistence API)
-	- ORM의 한 종류로 Java에서 사용.
+	- ORM의 한 종류로 Java에서 사용. (자바 ORM 기술의 표준 명세)
 	- 객체와 테이블의 연결된 정보만 알려주면 쿼리를 대신 짜줌.
 
 	Application			O/R Mapper			JDBC interface		JDBC Implementations	Persistence Layer
@@ -207,7 +207,7 @@ repositories에 사내 저장소 이름도 작성해주어야한다. (그러면 
 											  (Configuration for connection)
 
 2. JDBC (Java Database Connectivity)
-	: 자바에서 DB를 사용할 수 있도록 제공해주는 최소한의 API.
+	: 자바에서 DB를 사용할 수 있도록 제공해주는 최소한의 API. (단순히 DB와 Java 연결)
 	- SQL Mapper의 한 종류로 Java에서 사용.
 
 	Application		JDBC interface		JDBC Implementations	Persistence Layer
@@ -228,6 +228,13 @@ repositories에 사내 저장소 이름도 작성해주어야한다. (그러면 
    - 미설정 시 서버 실행 시 아래의 오류 발생
      Failed to configure a DataSource:
      'url' attribute is not specified and no embedded datasource could be configured.
+   - 설정정보
+     spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+     # ?serverTimezone=UTC&characterEncoding=UTF-8 설정은 optional한 부분
+     # 데이터베이스의 시간대와 인코딩방식 설정
+     spring.datasource.url=jdbc:mysql://localhost:3306/project?serverTimezone=UTC&characterEncoding=UTF-8
+     spring.datasource.username=root
+     spring.datasource.password=zerobase
 
 3. MySQL에 데이터베이스, 테이블생성
    - Project 데이터베이스 생성
