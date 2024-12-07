@@ -21,11 +21,13 @@
 	   사용하고자 하는 api가 있다면 구글에서 검색하면 찾을 수 있다.
 	   유료 api도 있기 때문에 free로 검색.)
 	: 부분적으로 무료 (1분에 60번 호출까지 무료)
-	: 링크첨부필요
+
 
 <선택한 api의 사용 적합성 확인>
 추후 api 종류를 변경하는 일은 어렵다.
 따라서 의문사항이 생긴 것들은 api document를 통해 모두 해소를 해야한다.
+- current weather data api document
+  https://openweathermap.org/current
 
 1. 제공데이터 확인하기
 OpenWeatherMap Api를 사용하기로 결정한 후 해당 api를 정말 사용해도 되는지를 확인해야 한다.
@@ -48,6 +50,91 @@ weather.main을 확인하니 비, 눈, 흐림 등의 데이터를 제공한다.
 main에서는 체감온도, 습도, 온도 등의 데이터를 제공한다.
 따라서 response에서 쓸만한 데이터가 있는 것도 확인했고 응답형식도 json 혹은 xml로 무난함을 알 수 있다.
 
+
+<오픈API와 API Key>
+- API 인증 (Authentication)
+    : API를 호출하는 대상을 확인하는 절차
+- API 인증방식
+    : 방식에 따라 구현 난이도와 보완 수준이 달라진다.
+    1. API Key 방식 : OpenWeatherMap api에서 사용하는 방식
+    2. API Token 방식
+- API Key (https://home.openweathermap.org/api_keys)
+    : 특정 사용자만 알 수 있는 문자열로 구성
+    : 개발자는 API 제공처에서 API Key를 발급
+        -> API 호출 시 API Key를 메시지 안에 넣어 호출
+        -> 서버는 메시지 안에서 API Key를 읽어들여 누가 호출한 API인지 인증
+    : OpenWeatherMap API는 1분에 60번 호출까지 무료이다.
+      따라서 악용되어 과금될 수 있으니 API 사용처를 인증하는 API Key는 어딘가에 업로드 하지말고 보관해야 한다.
+      (git에도 업로드하면 안된다는데 그럼 어떻게 키를 불러서 호출하지?)
+    ex) Request Header {
+            api-key: "1231231241242144"
+        }
+
+
+<OpenWeatherMap API 사용방법>
+- API 호출방식
+    https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
+- seoul의 응답결과
+{
+    "coord": {
+        "lon": 126.9778,
+        "lat": 37.5683
+    },
+    "weather": [
+        {
+            "id": 800,
+            "main": "Clear",
+            "description": "clear sky",
+            "icon": "01n"
+        }
+    ],
+    "base": "stations",
+    "main": {
+        "temp": 270.91,
+        "feels_like": 266.43,
+        "temp_min": 270.91,
+        "temp_max": 270.91,
+        "pressure": 1024,
+        "humidity": 69,
+        "sea_level": 1024,
+        "grnd_level": 1013
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 3.6,
+        "deg": 340
+    },
+    "clouds": {
+        "all": 0
+    },
+    "dt": 1733574135,
+    "sys": {
+        "type": 1,
+        "id": 8105,
+        "country": "KR",
+        "sunrise": 1733524421,
+        "sunset": 1733559223
+    },
+    "timezone": 32400,
+    "id": 1835848,
+    "name": "Seoul",
+    "cod": 200
+}
+- 예상 활용 정보
+    - weather의 main, icon
+    - main의 temp
+
+
+<날씨 일기 저장 API 구현>
+1. OpenWeahterMap에서 SpringBoot로 데이터 받아오기
+2. 받아온 json 데이터 사용 가능하게 파싱하기
+3. SpringBoot에서 DB로 데이터 저장하기
+- client, controller, service, repository 간 데이터는 DTO로 주고받음
+- repository와 DB는 Entity로 데이터 주고받음
+
+
+<JSON Formatter>
+크롬 확장 프로그램으로 크롬에서 API 호출 시 결과값이 json인 문자열에 대해서는 JSON형태에 맞도록 한 눈에 보기 쉽게 출력해줌.
 
 
 
