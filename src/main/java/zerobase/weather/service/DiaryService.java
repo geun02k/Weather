@@ -5,10 +5,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import zerobase.weather.domain.DateWeather;
 import zerobase.weather.domain.Diary;
+import zerobase.weather.repository.DateWeatherRepository;
 import zerobase.weather.repository.DiaryRepository;
 
 import java.io.BufferedReader;
@@ -26,10 +29,22 @@ public class DiaryService {
     @Value("${openweathermap.key}")
     private String apiKey;
 
+    private final DateWeatherRepository dateWeatherRepository;
     private final DiaryRepository diaryRepository;
 
-    public DiaryService(DiaryRepository diaryRepository) {
+    public DiaryService(DateWeatherRepository dateWeatherRepository, DiaryRepository diaryRepository) {
+        this.dateWeatherRepository = dateWeatherRepository;
         this.diaryRepository = diaryRepository;
+    }
+
+    /**
+     * 매일 새벽 1시 OpenWeatherMap api 호출해 현재일자에 대한 날씨정보 DB에 저장
+     * (스케줄링을 통한 서버에서 캐싱)
+     */
+    @Transactional(readOnly = false)
+    @Scheduled(cron="0 0 1 * * *") // 매일 새벽 1시
+    public void saveWeatherDate() {
+        dateWeatherRepository.save(getWeatherFromApi());
     }
 
     /**
@@ -105,6 +120,22 @@ public class DiaryService {
     @Transactional(readOnly = false)
     public void deleteDiary(LocalDate date) {
         diaryRepository.deleteAllByDate(date);
+    }
+
+    private DateWeather getWeatherFromApi() {
+        // 1. 외부 api에서 전일 날씨 데이터 얻어오기
+        String weatherData = getWeatherString();
+
+        // 2. 받아온 json 데이터 사용 가능하게 파싱하기
+        Map<String, Object> parsedWeather = parseWeather(weatherData);
+
+        // 3. DateWeather 타입의 객체에 데이터 저장
+        DateWeather dateWeather = new DateWeather();
+        dateWeather.setDate(LocalDate.now());
+        dateWeather.setWeather(parsedWeather.get("main").toString());
+        dateWeather.setIcon(parsedWeather.get("icon").toString());
+        dateWeather.setTemperature((Double) parsedWeather.get("temp"));
+        return dateWeather;
     }
 
     private String getWeatherString() {

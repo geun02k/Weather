@@ -20,5 +20,11 @@ create table diary(
     date DATE NOT NULL
 );
 
-
+-- date_weather(날씨정보저장) 테이블생성
+create table date_weather (
+    date DATE not null primary key,
+    weather VARCHAR(50) NOT NULL,
+    icon VARCHAR(50) NOT NULL,
+    temperature DOUBLE NOT NULL
+);
 
