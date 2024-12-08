@@ -15,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -28,6 +29,14 @@ public class DiaryService {
         this.diaryRepository = diaryRepository;
     }
 
+    /**
+     * 날씨일기저장
+     * 1. OpenWeahterMap에서 SpringBoot로 데이터 받아오기
+     * 2. 받아온 json 데이터 사용 가능하게 파싱하기
+     * 3. SpringBoot에서 DB로 데이터 저장하기
+     * @param date 일자
+     * @param text 일기내용
+     */
     public void createDiary(LocalDate date, String text) {
         // 1. OpenWeahterMap에서 SpringBoot로 데이터 받아오기
         String weatherData = getWeatherString();
@@ -51,6 +60,15 @@ public class DiaryService {
         newDiary.setText(text);
         newDiary.setDate(date);
         diaryRepository.save(newDiary);
+    }
+
+    /**
+     * 날짜에 대한 날씨일기 목록조회
+     * @param date 일자
+     * @return Diary 객체 목록
+     */
+    public List<Diary> readDiary(LocalDate date) {
+        return diaryRepository.findAllByDate(date);
     }
 
     private String getWeatherString() {
@@ -116,4 +134,7 @@ public class DiaryService {
 
         return resultMap;
     }
+
+
+
 }
