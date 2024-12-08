@@ -449,7 +449,15 @@ repositories에 사내 저장소 이름도 작성해주어야한다. (그러면 
            존재하지 않는 id에 대해서는 신규 insert를 수행하게 되지만
            동일 id에 대해 save() 메서들를 호출하게 되면
            해당 id에 데이터를 덮어쓰는 update를 수행하게 된다.
-
-
+- delete() : 해당 메서드 호출 시 아래의 에러 발생.
+             jakarta.persistence.TransactionRequiredException:
+                No EntityManager with actual transaction available for current thread
+                - cannot reliably process 'remove' call
+            repository에서 해당 메서드 위에 @Transactional 어노테이션을 사용해 정상적으로 delete() 메서드가 실행될 수 있도록 한다.
+            해당 어노테이션 작성 시 2개의 import문이 뜨는데 아래의 클래스를 import해준다.
+            jakarta보다 더 많은 부가기능을 제공하기 때문이다. (사실상 부가기능 사용하지 않아 어떤 것을 쓰든 상관없음.)
+            import org.springframework.transaction.annotation.Transactional;
+            - 참고 블로그 (두 @Transactional의 차이)
+              : https://velog.io/@chiyongs/Transactional-%EC%96%B4%EB%96%A4-%EA%B1%B8-%EC%82%AC%EC%9A%A9%ED%95%B4%EC%95%BC-%ED%95%A0%EA%B9%8C
 <Domain>
 
