@@ -49,33 +49,19 @@ public class DiaryService {
 
     /**
      * 날씨일기저장
-     * 1. OpenWeahterMap에서 SpringBoot로 데이터 받아오기
-     * 2. 받아온 json 데이터 사용 가능하게 파싱하기
-     * 3. SpringBoot에서 DB로 데이터 저장하기
+     * 1. 날씨 데이터 가져오기
+     * 2. DBd에 일기 데이터 저장하기
      * @param date 일자
      * @param text 일기내용
      */
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE)
     public void createDiary(LocalDate date, String text) {
-        // 1. OpenWeahterMap에서 SpringBoot로 데이터 받아오기
-        String weatherData = getWeatherString();
-        System.out.println(weatherData);
+        // 1. 날씨 데이터 가져오기
+        DateWeather dateWeather = getDateWeather(date);
 
-        // 2. 받아온 json 데이터 사용 가능하게 파싱하기
-        // url을 통해 받아온 json 데이터는 20개가 넘는 다량의 데이터를 가지고 있다.
-        // 이 20개의 정보들을 명시한 class를 만들어 데이터를 담을수도 있지만
-        // 이는 사용하지 않을 데이터들을 담기 떄문에 비효율적이다.
-        // 따라서 모든걸 명시한 클래스를 만들어 url 요청으로 받은 json 데이터를
-        // 해당 클래스타입으로 변환할 수도 있지만
-        // 이럴 때는 큰 class를 만드는 것이 아닌
-        // json 데이터를 파싱해와 class에 담는 방식이 더 좋아보인다.
-        Map<String, Object> parsedWeather = parseWeather(weatherData);
-
-        // 3. SpringBoot에서 DB로 데이터 저장하기
+        // 2. DBd에 일기 데이터 저장하기
         Diary newDiary = new Diary();
-        newDiary.setWeather(parsedWeather.get("main").toString());
-        newDiary.setIcon(parsedWeather.get("icon").toString());
-        newDiary.setTemperature((Double) parsedWeather.get("temp"));
+        newDiary.setDateWeather(dateWeather);
         newDiary.setText(text);
         newDiary.setDate(date);
         diaryRepository.save(newDiary);
@@ -120,6 +106,18 @@ public class DiaryService {
     @Transactional(readOnly = false)
     public void deleteDiary(LocalDate date) {
         diaryRepository.deleteAllByDate(date);
+    }
+
+    private DateWeather getDateWeather(LocalDate date) {
+        // 해당 날씨 데이터 DB에 존재여부 확인
+        List<DateWeather> dateWeatherListFromDB =
+                dateWeatherRepository.findAllByDate(date);
+        if(dateWeatherListFromDB.size() == 0) {
+            // 새로 api 호출해 날씨 정보 가져오기
+            return getWeatherFromApi();
+        } else {
+            return dateWeatherListFromDB.get(0);
+        }
     }
 
     private DateWeather getWeatherFromApi() {

@@ -128,6 +128,13 @@ main에서는 체감온도, 습도, 온도 등의 데이터를 제공한다.
 <날씨 일기 저장 API 구현>
 1. OpenWeahterMap에서 SpringBoot로 데이터 받아오기
 2. 받아온 json 데이터 사용 가능하게 파싱하기
+   : url을 통해 받아온 json 데이터는 20개가 넘는 다량의 데이터를 가지고 있다.
+     이 20개의 정보들을 명시한 class를 만들어 데이터를 담을수도 있지만
+     이는 사용하지 않을 데이터들을 담기 떄문에 비효율적이다.
+     따라서 모든걸 명시한 클래스를 만들어 url 요청으로 받은 json 데이터를
+     해당 클래스타입으로 변환할 수도 있지만
+     이럴 때는 큰 class를 만드는 것이 아닌
+     json 데이터를 파싱해와 class에 담는 방식이 더 좋아보인다.
 3. SpringBoot에서 DB로 데이터 저장하기
 - client, controller, service, repository 간 데이터는 DTO로 주고받음
 - repository와 DB는 Entity로 데이터 주고받음
