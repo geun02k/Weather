@@ -71,6 +71,16 @@ public class DiaryService {
         return diaryRepository.findAllByDate(date);
     }
 
+    /**
+     * 날짜 구간에 대한 날씨일기 목록조회
+     * @param startDate 시작일자
+     * @param endDate 종료일자
+     * @return Diary 객체 목록
+     */
+    public List<Diary> readDiaries(LocalDate startDate, LocalDate endDate) {
+        return diaryRepository.findAllByDateBetween(startDate, endDate);
+    }
+
     private String getWeatherString() {
         String apiUrl = "https://api.openweathermap.org/data/2.5/weather?"
                             +"q=seoul&appid=" + apiKey;
