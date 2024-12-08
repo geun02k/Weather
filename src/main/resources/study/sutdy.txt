@@ -444,8 +444,12 @@ repositories에 사내 저장소 이름도 작성해주어야한다. (그러면 
              그런 환경 분리는 resource 폴더 아래의 properties 파일에서 properties를 환경마다 지정해주고
              코드상에서는 환경과 무관하게 아래와 같이 키값만 가지고 value를 불러올 수 있다.
 
-
 <Repository>
+- save() : save()는 저장하는 메서드가 아니다.
+           존재하지 않는 id에 대해서는 신규 insert를 수행하게 되지만
+           동일 id에 대해 save() 메서들를 호출하게 되면
+           해당 id에 데이터를 덮어쓰는 update를 수행하게 된다.
+
 
 <Domain>
 
