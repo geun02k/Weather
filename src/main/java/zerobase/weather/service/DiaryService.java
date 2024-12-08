@@ -4,11 +4,14 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import zerobase.weather.WeatherApplication;
 import zerobase.weather.domain.DateWeather;
 import zerobase.weather.domain.Diary;
 import zerobase.weather.repository.DateWeatherRepository;
@@ -32,6 +35,11 @@ public class DiaryService {
     private final DateWeatherRepository dateWeatherRepository;
     private final DiaryRepository diaryRepository;
 
+    // Logger 생성
+    // LoggerFactory.getLogger() 떤 클래스에서 Logger 객체를 가져올지 지정.
+    // 우리는 Logger를 프로젝트 전체에 하나만 만들어서 사용
+    private static final Logger logger = LoggerFactory.getLogger(WeatherApplication.class);
+
     public DiaryService(DateWeatherRepository dateWeatherRepository, DiaryRepository diaryRepository) {
         this.dateWeatherRepository = dateWeatherRepository;
         this.diaryRepository = diaryRepository;
@@ -44,7 +52,8 @@ public class DiaryService {
     @Transactional(readOnly = false)
     @Scheduled(cron="0 0 1 * * *") // 매일 새벽 1시
     public void saveWeatherDate() {
-        dateWeatherRepository.save(getWeatherFromApi());
+        DateWeather savedWeather = dateWeatherRepository.save(getWeatherFromApi());
+        logger.info(savedWeather.getDate().toString() + " 날씨데이터 잘 가져옴.");
     }
 
     /**
@@ -56,6 +65,7 @@ public class DiaryService {
      */
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE)
     public void createDiary(LocalDate date, String text) {
+        logger.info("started to create diary.");
         // 1. 날씨 데이터 가져오기
         DateWeather dateWeather = getDateWeather(date);
 
@@ -65,6 +75,10 @@ public class DiaryService {
         newDiary.setText(text);
         newDiary.setDate(date);
         diaryRepository.save(newDiary);
+        logger.info("end to create diary.");
+        // createDiary() 메서드 호출 시 logs 폴더의 log_file.log 파일에 아래의 두 로그 출력됨.
+//        [2024-12-09 04:48:44:28242][http-nio-8080-exec-1] INFO  z.weather.WeatherApplication - started to create diary.
+//        [2024-12-09 04:48:45:29280][http-nio-8080-exec-1] INFO  z.weather.WeatherApplication - end to create diary.
     }
 
     /**
@@ -73,6 +87,7 @@ public class DiaryService {
      * @return Diary 객체 목록
      */
     public List<Diary> readDiary(LocalDate date) {
+        logger.debug("read diary.");
         return diaryRepository.findAllByDate(date);
     }
 
@@ -83,6 +98,7 @@ public class DiaryService {
      * @return Diary 객체 목록
      */
     public List<Diary> readDiaries(LocalDate startDate, LocalDate endDate) {
+        logger.debug("read diaries.");
         return diaryRepository.findAllByDateBetween(startDate, endDate);
     }
 
@@ -93,10 +109,12 @@ public class DiaryService {
      */
     @Transactional(readOnly = false)
     public void updateDiary(LocalDate date, String text) {
+        logger.debug("started to update diary.");
         Diary nowDiary = diaryRepository.getFirstByDate(date);
         nowDiary.setText(text);
 
         diaryRepository.save(nowDiary);
+        logger.debug("end to update diary.");
     }
 
     /**
@@ -105,7 +123,9 @@ public class DiaryService {
      */
     @Transactional(readOnly = false)
     public void deleteDiary(LocalDate date) {
+        logger.debug("started to delete diary.");
         diaryRepository.deleteAllByDate(date);
+        logger.debug("end to delete diary.");
     }
 
     private DateWeather getDateWeather(LocalDate date) {
