@@ -6,6 +6,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import zerobase.weather.domain.Diary;
 import zerobase.weather.repository.DiaryRepository;
 
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional(readOnly = true)
 public class DiaryService {
     @Value("${openweathermap.key}")
     private String apiKey;
@@ -37,6 +40,7 @@ public class DiaryService {
      * @param date 일자
      * @param text 일기내용
      */
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE)
     public void createDiary(LocalDate date, String text) {
         // 1. OpenWeahterMap에서 SpringBoot로 데이터 받아오기
         String weatherData = getWeatherString();
@@ -86,6 +90,7 @@ public class DiaryService {
      * @param date 일자
      * @param text 신규 일기내용
      */
+    @Transactional(readOnly = false)
     public void updateDiary(LocalDate date, String text) {
         Diary nowDiary = diaryRepository.getFirstByDate(date);
         nowDiary.setText(text);
@@ -97,6 +102,7 @@ public class DiaryService {
      * 해당 날짜에 대한 모든 일기 삭제
      * @param date 일자
      */
+    @Transactional(readOnly = false)
     public void deleteDiary(LocalDate date) {
         diaryRepository.deleteAllByDate(date);
     }
