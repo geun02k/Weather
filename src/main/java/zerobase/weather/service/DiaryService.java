@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import zerobase.weather.WeatherApplication;
 import zerobase.weather.domain.DateWeather;
 import zerobase.weather.domain.Diary;
+import zerobase.weather.error.InvalidDate;
 import zerobase.weather.repository.DateWeatherRepository;
 import zerobase.weather.repository.DiaryRepository;
 
@@ -88,6 +89,10 @@ public class DiaryService {
      */
     public List<Diary> readDiary(LocalDate date) {
         logger.debug("read diary.");
+        // 3050년이 넘는 일자를 넣었을 때
+        if(date.isAfter(LocalDate.ofYearDay(3050, 1))) {
+            throw new InvalidDate();
+        }
         return diaryRepository.findAllByDate(date);
     }
 
