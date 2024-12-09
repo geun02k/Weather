@@ -854,3 +854,63 @@ ex) 트랜잭션 = 오늘일기 작성하기
    : 일관성있는 에외처리를 위해서 @ControllerAdvice 어노테이션을 추가한 핸들러 클래스를 이용한다.
      해당 핸들러 클래스에 예외처리 메서드들을 추가해 관리한다.
      (Controller마다 동일 예외에 대해서 예외처리 메서드를 반복해 생성하지 않고 한번에 해결가능)
+
+
+
+
+
+=============================== << API Document >> ===============================
+- API document 작성 이유
+ : 내가 어떤 의도를 가지고 기능에 대해 코드를 작성했는지를 다른사람들과 공유하기 위함.
+  1. 프론트 개발자에게 사용방법이 정의된 문서를 전달에 필요.
+  2. 백엔드 개발자까리 공유하기 위해 필요.
+
+- 필요내용
+ 1. API 호출방법
+ 2. 전달 파라미터
+ 3. 응답 필드
+ ...
+
+< API Document 작성 Tool >
+ : API를 문서화 시켜주는 툴
+1. Swagger
+    - 웹사이트처럼 url로 접근가능. (텍스트파일로도 output 낼 수 있음.)
+    - API document에 url로 접근 시 안에서 api를 직접 호출해 테스트 가능.
+2. ReDoc
+3. GitBook
+...
+
+< 접속경로 >
+  : http://localhost:8080/swagger-ui/index.html
+
+< 발생오류 및 해결 >
+1. 오류발생
+   : 강의대로 설정 후 실행 시 오류발생
+     java.lang.TypeNotPresentException: Type javax.servlet.http.HttpServletRequest not present
+   - 해결방법
+     : 강의의 스프링부트 버전은 2.x, 현재 프로젝트의 버전은 3.x 이므로
+       2.x에서는 Springfox 라이브러리를 지원하지만 2020년 이후 업데이트가 중단되어 3.x 버전에 대한 jakarta 패키지 대응이 이뤄지지 않아
+       해당 라이브러리 대신 springdoc 라이브러리를 사용해 해결.
+   - 문제해결 도움 블로그
+    : https://velog.io/@gmlstjq123/SpringBoot-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%97%90-Swagger-UI-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0
+      https://nooblette.tistory.com/entry/Spring-Boot-3%EB%B2%84%EC%A0%84-%EC%9D%B4%EC%83%813XX%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%97%90-Swagger-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0
+
+2. 오류발생
+   : 'http://localhost:8080/swagger-ui/index.html' 경로로 요청 시 아래의 오류가 발생합니다.
+   1. Error창 출력 : Fetch error
+                    responce status is 500 /v3/api-docs
+   2. 화면 출력 : Faild to load API definition.
+   3. intellij console : error from GlobalExceptionHandler
+                         jakarta.servlet.ServletException: Handler dispatch failed: java.lang.NoSuchMethodError:
+                             'void org.springframework.web.method.ControllerAdviceBean.<init>(java.lang.Object)'
+   - 해결방법 (해결못하고 스프링부트 다운그레이드)
+       강의를 통해 생성했던 GlobalExceptionHandler.java 파일에서 /v3/api-docs 경로가 정의되지 않은 경로라 오류가 발생한다고 생각합니다.
+       GlobalExceptionHandler.java 파일을 제거하고 실행 시
+       'http://localhost:8080/swagger-ui/index.html' url에 대해 정상출력합니다.
+       어느 부분에서 에러가 발생하는지 알았으나, GlobalExceptionHandler.java 파일을 제거하지 않고
+       전역예외처리도 수행하면서 Swagger도 사용할 수 있는 방법을 찾지 못해 일단 스프링부트를 2.x 버전으로 다운그레이드 했습니다.
+
+- 추가 조회한 블로그
+    https://adjh54.tistory.com/561
+    https://velog.io/@imuu2256/Spring-Spring-boot-3.2.0%EC%97%90%EC%84%9C-Spring-Open-API-%EC%9D%B4%EC%9A%A9%ED%95%98%EC%97%AC-Swagger-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0
+    https://velog.io/@kjgi73k/Springboot3%EC%97%90-Swagger3%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0
