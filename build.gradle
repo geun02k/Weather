@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.4.0'
+	id 'org.springframework.boot' version '2.6.4'
 	id 'io.spring.dependency-management' version '1.1.6'
 }
 
@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT' // weather 프로젝트의 버전
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(8)
 	}
 }
 
@@ -39,7 +39,8 @@ dependencies {
 	// json 파싱 라이브러리 추가
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 	// Swagger 관련 라이브러리 추가
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -47,7 +48,7 @@ dependencies {
 	// mysql 관련 라이브러리 추가
 	// mysql 8.0.31 버전 이후 커넥터 패키지가
 	// mysql:mysql-connector-java -> com.mysql:mysql-connector-j로 변경됨)
-	runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'mysql:mysql-connector-java'
 }
 
 tasks.named('test') {
