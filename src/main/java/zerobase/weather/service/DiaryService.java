@@ -14,9 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import zerobase.weather.WeatherApplication;
 import zerobase.weather.domain.DateWeather;
 import zerobase.weather.domain.Diary;
-import zerobase.weather.error.InvalidDate;
+import zerobase.weather.error.WeatherDiaryException;
 import zerobase.weather.repository.DateWeatherRepository;
 import zerobase.weather.repository.DiaryRepository;
+import zerobase.weather.type.ErrorCode;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -91,7 +92,7 @@ public class DiaryService {
         logger.debug("read diary.");
         // 3050년이 넘는 일자를 넣었을 때
         if(date.isAfter(LocalDate.ofYearDay(3050, 1))) {
-            throw new InvalidDate();
+            throw new WeatherDiaryException(ErrorCode.TOO_LONG_OR_TOO_SHORT_DATE);
         }
         return diaryRepository.findAllByDate(date);
     }
@@ -162,6 +163,10 @@ public class DiaryService {
     }
 
     private String getWeatherString() {
+        if(apiKey.isEmpty() || "0000".equals(apiKey)) {
+            throw new WeatherDiaryException(ErrorCode.API_KEY_NOT_EXIST);
+        }
+
         String apiUrl = "https://api.openweathermap.org/data/2.5/weather?"
                             +"q=seoul&appid=" + apiKey;
         System.out.println(apiUrl);
